@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { Sector, SectorHistoryData } from '../../shared/types';
 import { api } from '../lib/api';
@@ -6,25 +5,25 @@ import { api } from '../lib/api';
 interface SectorStore {
   sectors: Sector[];
   selectedSectors: string[];
-  historyData: Record&lt;string, SectorHistoryData[]&gt;;
+  historyData: Record<string, SectorHistoryData[]>;
   loading: boolean;
   error: string | null;
   
-  fetchSectors: () =&gt; Promise&lt;void&gt;;
-  fetchSectorHistory: (id: string) =&gt; Promise&lt;void&gt;;
-  toggleSectorSelection: (id: string) =&gt; void;
-  clearSelection: () =&gt; void;
-  refreshData: () =&gt; Promise&lt;void&gt;;
+  fetchSectors: () => Promise<void>;
+  fetchSectorHistory: (id: string) => Promise<void>;
+  toggleSectorSelection: (id: string) => void;
+  clearSelection: () => void;
+  refreshData: () => Promise<void>;
 }
 
-export const useSectorStore = create&lt;SectorStore&gt;((set, get) =&gt; ({
+export const useSectorStore = create<SectorStore>((set, get) => ({
   sectors: [],
   selectedSectors: [],
   historyData: {},
   loading: false,
   error: null,
 
-  fetchSectors: async () =&gt; {
+  fetchSectors: async () => {
     set({ loading: true, error: null });
     try {
       const sectors = await api.getSectors();
@@ -34,10 +33,10 @@ export const useSectorStore = create&lt;SectorStore&gt;((set, get) =&gt; ({
     }
   },
 
-  fetchSectorHistory: async (id: string) =&gt; {
+  fetchSectorHistory: async (id: string) => {
     try {
       const history = await api.getSectorHistory(id);
-      set(state =&gt; ({
+      set(state => ({
         historyData: {
           ...state.historyData,
           [id]: history
@@ -48,22 +47,22 @@ export const useSectorStore = create&lt;SectorStore&gt;((set, get) =&gt; ({
     }
   },
 
-  toggleSectorSelection: (id: string) =&gt; {
-    set(state =&gt; {
+  toggleSectorSelection: (id: string) => {
+    set(state => {
       const isSelected = state.selectedSectors.includes(id);
       return {
         selectedSectors: isSelected
-          ? state.selectedSectors.filter(s =&gt; s !== id)
+          ? state.selectedSectors.filter(s => s !== id)
           : [...state.selectedSectors, id]
       };
     });
   },
 
-  clearSelection: () =&gt; {
+  clearSelection: () => {
     set({ selectedSectors: [] });
   },
 
-  refreshData: async () =&gt; {
+  refreshData: async () => {
     set({ loading: true, error: null });
     try {
       await api.scrapeData();

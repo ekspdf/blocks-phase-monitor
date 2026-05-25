@@ -1,7 +1,5 @@
+import { Sector, SectorHistoryData } from '../../shared/types.js';
 
-import { Sector, SectorHistoryData } from '../../shared/types';
-
-// 板块模拟数据
 const MOCK_SECTORS = [
   { name: '银行', code: 'BK0465' },
   { name: '保险', code: 'BK0474' },
@@ -19,19 +17,18 @@ const MOCK_SECTORS = [
 
 function generateRandomData(): {
   sectors: Sector[];
-  history: Record&lt;string, SectorHistoryData[]&gt;;
+  history: Record<string, SectorHistoryData[]>;
 } {
   const sectors: Sector[] = [];
-  const history: Record&lt;string, SectorHistoryData[]&gt; = {};
+  const history: Record<string, SectorHistoryData[]> = {};
   const now = new Date();
 
-  MOCK_SECTORS.forEach((sector, index) =&gt; {
+  MOCK_SECTORS.forEach((sector, index) => {
     const id = (index + 1).toString();
     const baseTurnover = 1 + Math.random() * 5;
     const historyData: SectorHistoryData[] = [];
 
-    // 生成过去一年的数据（约250个交易日）
-    for (let i = 250; i &gt;= 0; i--) {
+    for (let i = 250; i >= 0; i--) {
       const date = new Date(now);
       date.setDate(date.getDate() - i);
       const dateStr = date.toISOString().split('T')[0];
@@ -62,15 +59,13 @@ function generateRandomData(): {
 }
 
 export class ScraperService {
-  async scrapeData(): Promise&lt;{
+  async scrapeData(): Promise<{
     sectors: Sector[];
-    history: Record&lt;string, SectorHistoryData[]&gt;;
-  }&gt; {
+    history: Record<string, SectorHistoryData[]>;
+  }> {
     console.log('开始获取板块数据...');
     
-    // 真实场景这里会调用东方财富网API或爬取页面
-    // 这里使用模拟数据替代
-    await new Promise(resolve =&gt; setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     const data = generateRandomData();
     console.log(`成功获取 ${data.sectors.length} 个板块数据`);

@@ -1,4 +1,3 @@
-
 export interface Sector {
   id: string;
   name: string;
@@ -21,5 +20,5 @@ export interface SectorHistory {
 
 export interface DataStore {
   sectors: Sector[];
-  history: Record&lt;string, SectorHistoryData[]&gt;;
+  history: Record<string, SectorHistoryData[]>;
 }

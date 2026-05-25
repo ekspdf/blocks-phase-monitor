@@ -1,9 +1,8 @@
-
 import { Sector, SectorHistoryData } from '../../shared/types';
 
 const API_BASE = '/api';
 
-async function fetchAPI&lt;T&gt;(endpoint: string, options?: RequestInit): Promise&lt;T&gt; {
+async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${endpoint}`, {
     headers: {
       'Content-Type': 'application/json',
@@ -25,20 +24,20 @@ async function fetchAPI&lt;T&gt;(endpoint: string, options?: RequestInit): Promi
 }
 
 export const api = {
-  async getSectors(): Promise&lt;Sector[]&gt; {
-    return fetchAPI&lt;Sector[]&gt;('/sectors');
+  async getSectors(): Promise<Sector[]> {
+    return fetchAPI<Sector[]>('/sectors');
   },
 
-  async getSector(id: string): Promise&lt;Sector&gt; {
-    return fetchAPI&lt;Sector&gt;(`/sectors/${id}`);
+  async getSector(id: string): Promise<Sector> {
+    return fetchAPI<Sector>(`/sectors/${id}`);
   },
 
-  async getSectorHistory(id: string): Promise&lt;SectorHistoryData[]&gt; {
-    return fetchAPI&lt;SectorHistoryData[]&gt;(`/sectors/${id}/history`);
+  async getSectorHistory(id: string): Promise<SectorHistoryData[]> {
+    return fetchAPI<SectorHistoryData[]>(`/sectors/${id}/history`);
   },
 
-  async scrapeData(): Promise&lt;{ sectorCount: number }&gt; {
-    return fetchAPI&lt;{ sectorCount: number }&gt;('/sectors/scrape', {
+  async scrapeData(): Promise<{ sectorCount: number }> {
+    return fetchAPI<{ sectorCount: number }>('/sectors/scrape', {
       method: 'POST'
     });
   }

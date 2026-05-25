@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
@@ -14,7 +13,6 @@ import {
   Filler
 } from 'chart.js';
 import { useSectorStore } from '../store/sectorStore';
-import { Sector } from '../../shared/types';
 import { TrendingUp, TrendingDown, Search, Eye } from 'lucide-react';
 
 ChartJS.register(
@@ -48,27 +46,27 @@ export default function Home() {
   } = useSectorStore();
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState&lt;'name' | 'turnover' | 'change'&gt;('turnover');
-  const [sortOrder, setSortOrder] = useState&lt;'asc' | 'desc'&gt;('desc');
+  const [sortBy, setSortBy] = useState('turnover');
+  const [sortOrder, setSortOrder] = useState('desc');
 
-  useEffect(() =&gt; {
+  useEffect(() => {
     fetchSectors();
   }, [fetchSectors]);
 
-  useEffect(() =&gt; {
-    selectedSectors.forEach(id =&gt; {
+  useEffect(() => {
+    selectedSectors.forEach(id => {
       if (!historyData[id]) {
         fetchSectorHistory(id);
       }
     });
   }, [selectedSectors, historyData, fetchSectorHistory]);
 
-  const filteredAndSortedSectors = useMemo(() =&gt; {
-    let filtered = sectors.filter(sector =&gt;
+  const filteredAndSortedSectors = useMemo(() => {
+    let filtered = sectors.filter(sector =>
       sector.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     
-    filtered.sort((a, b) =&gt; {
+    filtered.sort((a, b) => {
       let comparison = 0;
       if (sortBy === 'name') {
         comparison = a.name.localeCompare(b.name);
@@ -83,21 +81,21 @@ export default function Home() {
     return filtered;
   }, [sectors, searchTerm, sortBy, sortOrder]);
 
-  const chartData = useMemo(() =&gt; {
+  const chartData = useMemo(() => {
     if (selectedSectors.length === 0) return null;
 
     const firstHistory = historyData[selectedSectors[0]];
     if (!firstHistory) return null;
 
-    const labels = firstHistory.map(d =&gt; d.date);
+    const labels = firstHistory.map(d => d.date);
     
-    const datasets = selectedSectors.map((id, index) =&gt; {
-      const sector = sectors.find(s =&gt; s.id === id);
+    const datasets = selectedSectors.map((id, index) => {
+      const sector = sectors.find(s => s.id === id);
       const history = historyData[id];
       
       return {
         label: sector?.name || id,
-        data: history?.map(d =&gt; d.turnover) || [],
+        data: history?.map(d => d.turnover) || [],
         borderColor: COLORS[index % COLORS.length],
         backgroundColor: COLORS[index % COLORS.length] + '20',
         tension: 0.4,
@@ -108,12 +106,12 @@ export default function Home() {
     return { labels, datasets };
   }, [selectedSectors, historyData, sectors]);
 
-  const chartOptions = {
+  const chartOptions: any = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: 'top' as const
       },
       title: {
         display: true,
@@ -137,171 +135,164 @@ export default function Home() {
     }
   };
 
-  if (loading &amp;&amp; sectors.length === 0) {
+  if (loading && sectors.length === 0) {
     return (
-      &lt;div className="flex items-center justify-center min-h-[400px]"&gt;
-        &lt;div className="text-lg text-slate-600"&gt;加载中...&lt;/div&gt;
-      &lt;/div&gt;
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-lg text-slate-600">加载中...</div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      &lt;div className="flex items-center justify-center min-h-[400px]"&gt;
-        &lt;div className="text-lg text-red-600"&gt;错误: {error}&lt;/div&gt;
-      &lt;/div&gt;
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-lg text-red-600">错误: {error}</div>
+      </div>
     );
   }
 
   return (
-    &lt;div className="max-w-7xl mx-auto px-4 py-8"&gt;
-      &lt;div className="mb-8"&gt;
-        &lt;h1 className="text-3xl font-bold text-slate-900 mb-2"&gt;数据看板&lt;/h1&gt;
-        &lt;p className="text-slate-600"&gt;查看和分析板块换手率数据&lt;/p&gt;
-      &lt;/div&gt;
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">数据看板</h1>
+        <p className="text-slate-600">查看和分析板块换手率数据</p>
+      </div>
 
-      {selectedSectors.length &gt; 0 &amp;&amp; (
-        &lt;div className="mb-8"&gt;
-          &lt;div className="bg-white rounded-xl shadow-md p-6"&gt;
-            &lt;div className="flex items-center justify-between mb-4"&gt;
-              &lt;h2 className="text-xl font-semibold text-slate-800"&gt;换手率趋势&lt;/h2&gt;
-              &lt;button
+      {selectedSectors.length > 0 && (
+        <div className="mb-8">
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-slate-800">换手率趋势</h2>
+              <button
                 onClick={clearSelection}
                 className="text-sm text-blue-600 hover:text-blue-800"
-              &gt;
+              >
                 清除选择
-              &lt;/button&gt;
-            &lt;/div&gt;
-            &lt;div className="h-[400px]"&gt;
+              </button>
+            </div>
+            <div className="h-[400px]">
               {chartData ? (
-                &lt;Line data={chartData} options={chartOptions} /&gt;
+                <Line data={chartData} options={chartOptions} />
               ) : (
-                &lt;div className="flex items-center justify-center h-full text-slate-400"&gt;
+                <div className="flex items-center justify-center h-full text-slate-400">
                   加载图表数据中...
-                &lt;/div&gt;
+                </div>
               )}
-            &lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
+            </div>
+          </div>
+        </div>
       )}
 
-      &lt;div className="bg-white rounded-xl shadow-md"&gt;
-        &lt;div className="p-6 border-b border-slate-200"&gt;
-          &lt;div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between"&gt;
-            &lt;h2 className="text-xl font-semibold text-slate-800"&gt;板块列表&lt;/h2&gt;
-            &lt;div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"&gt;
-              &lt;div className="relative"&gt;
-                &lt;Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" /&gt;
-                &lt;input
+      <div className="bg-white rounded-xl shadow-md">
+        <div className="p-6 border-b border-slate-200">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <h2 className="text-xl font-semibold text-slate-800">板块列表</h2>
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <input
                   type="text"
                   placeholder="搜索板块..."
                   value={searchTerm}
-                  onChange={(e) =&gt; setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg 
-                           focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                /&gt;
-              &lt;/div&gt;
-              &lt;select
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <select
                 value={sortBy}
-                onChange={(e) =&gt; setSortBy(e.target.value as any)}
-                className="px-4 py-2 border border-slate-300 rounded-lg 
-                         focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              &gt;
-                &lt;option value="name"&gt;名称&lt;/option&gt;
-                &lt;option value="turnover"&gt;换手率&lt;/option&gt;
-                &lt;option value="change"&gt;涨跌幅&lt;/option&gt;
-              &lt;/select&gt;
-              &lt;button
-                onClick={() =&gt; setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="name">名称</option>
+                <option value="turnover">换手率</option>
+                <option value="change">涨跌幅</option>
+              </select>
+              <button
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                 className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg"
-              &gt;
-                {sortOrder === 'asc' ? '↑ 升序' : '↓ 降序'}
-              &lt;/button&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
+              >
+                {sortOrder === 'asc' ? '升序' : '降序'}
+              </button>
+            </div>
+          </div>
+        </div>
 
-        &lt;div className="overflow-x-auto"&gt;
-          &lt;table className="w-full"&gt;
-            &lt;thead className="bg-slate-50"&gt;
-              &lt;tr&gt;
-                &lt;th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"&gt;
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   选择
-                &lt;/th&gt;
-                &lt;th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"&gt;
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   板块名称
-                &lt;/th&gt;
-                &lt;th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"&gt;
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   代码
-                &lt;/th&gt;
-                &lt;th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"&gt;
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   最新换手率
-                &lt;/th&gt;
-                &lt;th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"&gt;
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   涨跌幅
-                &lt;/th&gt;
-                &lt;th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"&gt;
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   操作
-                &lt;/th&gt;
-              &lt;/tr&gt;
-            &lt;/thead&gt;
-            &lt;tbody className="bg-white divide-y divide-slate-200"&gt;
-              {filteredAndSortedSectors.map((sector) =&gt; (
-                &lt;tr 
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-slate-200">
+              {filteredAndSortedSectors.map((sector) => (
+                <tr 
                   key={sector.id}
-                  className={`hover:bg-slate-50 transition-colors
-                    ${selectedSectors.includes(sector.id) ? 'bg-blue-50' : ''}`}
-                &gt;
-                  &lt;td className="px-6 py-4 whitespace-nowrap"&gt;
-                    &lt;input
+                  className={`hover:bg-slate-50 transition-colors ${selectedSectors.includes(sector.id) ? 'bg-blue-50' : ''}`}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <input
                       type="checkbox"
                       checked={selectedSectors.includes(sector.id)}
-                      onChange={() =&gt; toggleSectorSelection(sector.id)}
+                      onChange={() => toggleSectorSelection(sector.id)}
                       className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                    /&gt;
-                  &lt;/td&gt;
-                  &lt;td className="px-6 py-4 whitespace-nowrap"&gt;
-                    &lt;div className="text-sm font-medium text-slate-900"&gt;
+                    />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-slate-900">
                       {sector.name}
-                    &lt;/div&gt;
-                  &lt;/td&gt;
-                  &lt;td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500"&gt;
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                     {sector.code}
-                  &lt;/td&gt;
-                  &lt;td className="px-6 py-4 whitespace-nowrap"&gt;
-                    &lt;span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800"&gt;
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                       {sector.latestTurnover.toFixed(2)}%
-                    &lt;/span&gt;
-                  &lt;/td&gt;
-                  &lt;td className="px-6 py-4 whitespace-nowrap"&gt;
-                    &lt;span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-sm font-medium
-                      ${sector.latestChange &gt;= 0 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'}`}
-                    &gt;
-                      {sector.latestChange &gt;= 0 ? (
-                        &lt;TrendingUp className="h-3 w-3" /&gt;
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-sm font-medium ${sector.latestChange >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                      {sector.latestChange >= 0 ? (
+                        <TrendingUp className="h-3 w-3" />
                       ) : (
-                        &lt;TrendingDown className="h-3 w-3" /&gt;
+                        <TrendingDown className="h-3 w-3" />
                       )}
-                      {sector.latestChange &gt;= 0 ? '+' : ''}{sector.latestChange.toFixed(2)}%
-                    &lt;/span&gt;
-                  &lt;/td&gt;
-                  &lt;td className="px-6 py-4 whitespace-nowrap text-sm font-medium"&gt;
-                    &lt;Link
+                      {sector.latestChange >= 0 ? '+' : ''}{sector.latestChange.toFixed(2)}%
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <Link
                       to={`/sector/${sector.id}`}
                       className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900"
-                    &gt;
-                      &lt;Eye className="h-4 w-4" /&gt;
+                    >
+                      <Eye className="h-4 w-4" />
                       详情
-                    &lt;/Link&gt;
-                  &lt;/td&gt;
-                &lt;/tr&gt;
+                    </Link>
+                  </td>
+                </tr>
               ))}
-            &lt;/tbody&gt;
-          &lt;/table&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   );
 }

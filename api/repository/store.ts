@@ -1,8 +1,7 @@
-
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { DataStore, Sector, SectorHistoryData } from '../../shared/types';
+import { DataStore, Sector, SectorHistoryData } from '../../shared/types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,7 +13,7 @@ const DEFAULT_STORE: DataStore = {
 };
 
 export class DataRepository {
-  private async ensureDataFile(): Promise&lt;void&gt; {
+  private async ensureDataFile(): Promise<void> {
     try {
       await fs.access(DATA_FILE);
     } catch {
@@ -23,45 +22,45 @@ export class DataRepository {
     }
   }
 
-  private async loadStore(): Promise&lt;DataStore&gt; {
+  private async loadStore(): Promise<DataStore> {
     await this.ensureDataFile();
     const data = await fs.readFile(DATA_FILE, 'utf-8');
     return JSON.parse(data);
   }
 
-  private async saveStore(store: DataStore): Promise&lt;void&gt; {
+  private async saveStore(store: DataStore): Promise<void> {
     await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
     await fs.writeFile(DATA_FILE, JSON.stringify(store, null, 2));
   }
 
-  async getAllSectors(): Promise&lt;Sector[]&gt; {
+  async getAllSectors(): Promise<Sector[]> {
     const store = await this.loadStore();
     return store.sectors;
   }
 
-  async getSectorById(id: string): Promise&lt;Sector | null&gt; {
+  async getSectorById(id: string): Promise<Sector | null> {
     const store = await this.loadStore();
-    return store.sectors.find(s =&gt; s.id === id) || null;
+    return store.sectors.find(s => s.id === id) || null;
   }
 
-  async getSectorHistory(id: string): Promise&lt;SectorHistoryData[]&gt; {
+  async getSectorHistory(id: string): Promise<SectorHistoryData[]> {
     const store = await this.loadStore();
     return store.history[id] || [];
   }
 
-  async saveSectors(sectors: Sector[]): Promise&lt;void&gt; {
+  async saveSectors(sectors: Sector[]): Promise<void> {
     const store = await this.loadStore();
     store.sectors = sectors;
     await this.saveStore(store);
   }
 
-  async saveSectorHistory(sectorId: string, history: SectorHistoryData[]): Promise&lt;void&gt; {
+  async saveSectorHistory(sectorId: string, history: SectorHistoryData[]): Promise<void> {
     const store = await this.loadStore();
     store.history[sectorId] = history;
     await this.saveStore(store);
   }
 
-  async saveAllData(sectors: Sector[], history: Record&lt;string, SectorHistoryData[]&gt;): Promise&lt;void&gt; {
+  async saveAllData(sectors: Sector[], history: Record<string, SectorHistoryData[]>): Promise<void> {
     await this.saveStore({
       sectors,
       history

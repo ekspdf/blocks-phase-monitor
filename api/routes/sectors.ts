@@ -1,15 +1,13 @@
-
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { dataRepository } from '../repository/store.js';
 import { scraperService } from '../services/scraper.js';
 
 const router = express.Router();
 
-router.get('/', async (req: Request, res: Response) =&gt; {
+router.get('/', async (req: express.Request, res: express.Response) => {
   try {
     const sectors = await dataRepository.getAllSectors();
     
-    // 如果没有数据，先获取一次
     if (sectors.length === 0) {
       const { sectors: newSectors, history } = await scraperService.scrapeData();
       await dataRepository.saveAllData(newSectors, history);
@@ -23,7 +21,7 @@ router.get('/', async (req: Request, res: Response) =&gt; {
   }
 });
 
-router.get('/:id', async (req: Request, res: Response) =&gt; {
+router.get('/:id', async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
     const sector = await dataRepository.getSectorById(id);
@@ -39,7 +37,7 @@ router.get('/:id', async (req: Request, res: Response) =&gt; {
   }
 });
 
-router.get('/:id/history', async (req: Request, res: Response) =&gt; {
+router.get('/:id/history', async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
     const history = await dataRepository.getSectorHistory(id);
@@ -51,7 +49,7 @@ router.get('/:id/history', async (req: Request, res: Response) =&gt; {
   }
 });
 
-router.post('/scrape', async (req: Request, res: Response) =&gt; {
+router.post('/scrape', async (req: express.Request, res: express.Response) => {
   try {
     const { sectors, history } = await scraperService.scrapeData();
     await dataRepository.saveAllData(sectors, history);
